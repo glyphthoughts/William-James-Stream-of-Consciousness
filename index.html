@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>William James: Stream of Consciousness</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body {
+            background: #000;
+            font-family: 'VT323', monospace;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .pixel {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: white;
+            opacity: 0.6;
+            z-index: 1;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        .container {
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: clamp(32px, 6vw, 48px);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #fff;
+            letter-spacing: 3px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subtitle {
+            font-size: clamp(18px, 3vw, 24px);
+            margin-bottom: 10px;
+            color: #aaa;
+            font-style: italic;
+            animation: fadeInDown 0.8s ease-out 0.2s backwards;
+        }
+
+        .info {
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ccc;
+            opacity: 0.9;
+            padding: 0 10px;
+            animation: fadeInDown 0.8s ease-out 0.4s backwards;
+        }
+
+        .stream-container {
+            position: relative;
+            width: 100%;
+            height: clamp(250px, 40vw, 350px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #fff;
+            margin: 30px 0;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .stream {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .stream::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .stream::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stream::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .stream::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        .thought {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #888;
+            border-radius: 20px;
+            padding: clamp(12px, 2vw, 15px) clamp(20px, 3vw, 25px);
+            margin: 8px 0;
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: #fff;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: thoughtAppear 0.6s ease-out forwards;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            max-width: 90%;
+            word-wrap: break-word;
+        }
+
+        @keyframes thoughtAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .thought.fading {
+            animation: thoughtFade 1s ease-out forwards;
+        }
+
+        @keyframes thoughtFade {
+            from {
+                opacity: 1;
+                filter: blur(0);
+            }
+
+            to {
+                opacity: 0.3;
+                filter: blur(2px);
+            }
+        }
+
+        .instruction {
+            font-size: clamp(20px, 3vw, 24px);
+            color: #888;
+            text-align: center;
+            padding: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 0 10px;
+            animation: fadeIn 1s ease-out 0.8s backwards;
+        }
+
+        .button {
+            position: relative;
+            cursor: pointer;
+            padding: clamp(15px, 2vw, 20px) clamp(25px, 4vw, 40px);
+            text-align: center;
+            display: inline-flex;
+            justify-content: center;
+            font-size: clamp(18px, 2.5vw, 24px);
+            text-transform: uppercase;
+            color: #fff;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+            font-family: 'VT323', monospace;
+            background: transparent;
+            border: none;
+            overflow: hidden;
+            outline-offset: 4px;
+            letter-spacing: 2px;
+            touch-action: manipulation;
+        }
+
+        .button:focus {
+            outline: 2px solid #fff;
+            outline-offset: 4px;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 20;
+            white-space: nowrap;
+        }
+
+        .button-shine {
+            position: absolute;
+            left: -75%;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(12deg);
+            z-index: 10;
+            filter: blur(20px);
+            transition: all 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        .button:hover .button-shine {
+            left: 125%;
+        }
+
+        .button-border-tl,
+        .button-border-tr,
+        .button-border-bl,
+        .button-border-br {
+            width: 50%;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            transition: all 0.3s;
+            display: block;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .button-border-tl {
+            border-left: 2px solid #fff;
+            border-top: 2px solid #fff;
+            height: 20%;
+            border-top-left-radius: 8px;
+            top: 0;
+            left: 0;
+        }
+
+        .button-border-tr {
+            border-right: 2px solid #fff;
+            border-top: 2px solid #fff;
+            height: 60%;
+            border-top-right-radius: 8px;
+            top: 0;
+            right: 0;
+        }
+
+        .button:hover .button-border-tr {
+            height: 90%;
+        }
+
+        .button-border-bl {
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            height: 60%;
+            border-bottom-left-radius: 8px;
+            left: 0;
+            bottom: 0;
+        }
+
+        .button:hover .button-border-bl {
+            height: 90%;
+        }
+
+        .button-border-br {
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            height: 20%;
+            border-bottom-right-radius: 8px;
+            right: 0;
+            bottom: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            font-size: clamp(18px, 2.5vw, 24px);
+            padding: 0 10px;
+            animation: fadeIn 1s ease-out 1s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: clamp(24px, 4vw, 36px);
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            margin-top: 5px;
+            word-break: break-word;
+        }
+
+        .stat-value.updated {
+            animation: statUpdate 0.5s ease-out;
+        }
+
+        @keyframes statUpdate {
+            0% {
+                transform: scale(1.3);
+                text-shadow: 0 0 20px #fff;
+            }
+
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px #fff;
+            }
+        }
+
+        .philosophy {
+            margin-top: 30px;
+            font-size: clamp(14px, 2vw, 18px);
+            font-style: italic;
+            color: #666;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+            padding: 0 15px;
+            animation: fadeIn 1s ease-out 1.2s backwards;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                margin-bottom: 10px;
+                letter-spacing: 2px;
+            }
+
+            .stream-container {
+                height: clamp(220px, 35vw, 300px);
+            }
+
+            .stats {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .stream-container {
+                height: 220px;
+            }
+
+            .thought {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .button {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .button:hover .button-shine {
+                left: -75%;
+            }
+
+            .button:active .button-shine {
+                left: 125%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>WILLIAM JAMES</h1>
+        <div class="subtitle">STREAM OF CONSCIOUSNESS</div>
+        <div class="info">
+            Consciousness flows like a stream.<br>
+            Watch your thoughts emerge, connect, and fade away.
+        </div>
+
+        <div class="stream-container">
+            <div class="stream" id="stream">
+                <div class="instruction" id="instruction">PRESS START STREAM TO BEGIN</div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="button" id="startBtn">
+                <span class="button-text">START STREAM</span>
+                <span class="button-shine"></span>
+                <span class="button-border-tl"></span>
+                <span class="button-border-tr"></span>
+                <span class="button-border-bl"></span>
+                <span class="button-border-br"></span>
+            </button>
+            <button class="button" id="stopBtn">
+                <span class="button-text">STOP</span>
+                <span class="button-shine"></span>
+                <span class="button-border-tl"></span>
+                <span class="button-border-tr"></span>
+                <span class="button-border-bl"></span>
+                <span class="button-border-br"></span>
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div>THOUGHTS GENERATED</div>
+                <div class="stat-value" id="thoughts">0</div>
+            </div>
+            <div class="stat">
+                <div>STREAM DURATION</div>
+                <div class="stat-value" id="duration">0s</div>
+            </div>
+            <div class="stat">
+                <div>FLOW STATE</div>
+                <div class="stat-value" id="state">PAUSED</div>
+            </div>
+        </div>
+
+        <div class="philosophy">
+            "Consciousness does not appear to itself chopped up in bits... it flows. A 'river' or a 'stream' are the
+            metaphors by which it is most naturally described."<br>
+            - William James (1842-1910)
+        </div>
+    </div>
+
+    <script>
+        const stream = document.getElementById('stream');
+        const instruction = document.getElementById('instruction');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const thoughtsEl = document.getElementById('thoughts');
+        const durationEl = document.getElementById('duration');
+        const stateEl = document.getElementById('state');
+
+        const thoughtCategories = [
+            '💭 What should I do today?',
+            '🤔 I remember when...',
+            '✨ What if I tried...',
+            '😊 That moment felt good',
+            '❓ Why does this happen?',
+            '🎯 I need to focus on...',
+            '📚 I learned something new',
+            '🌟 This could be important',
+            '💡 Interesting idea about...',
+            '🔄 This reminds me of...',
+            '⏰ Time is passing quickly',
+            '🎨 I could create something',
+            '🌊 Everything is connected',
+            '🌙 Dreams from last night',
+            '☀️ Tomorrow will be different',
+            '🎵 That song is stuck in my head',
+            '🍃 Nature is fascinating',
+            '👥 What are others thinking?',
+            '📖 Stories shape our reality',
+            '🔮 The future is uncertain'
+        ];
+
+        let isStreaming = false;
+        let thoughtCount = 0;
+        let streamInterval;
+        let durationInterval;
+        let seconds = 0;
+        let maxThoughts = 15;
+
+        function createStars() {
+            const starCount = window.innerWidth < 768 ? 50 : window.innerWidth < 480 ? 30 : 100;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'pixel';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        function generateThought() {
+            const thought = document.createElement('div');
+            thought.className = 'thought';
+            thought.textContent = thoughtCategories[Math.floor(Math.random() * thoughtCategories.length)];
+            return thought;
+        }
+
+        function addThought() {
+            if (instruction.style.display !== 'none') {
+                instruction.style.display = 'none';
+            }
+
+            const thought = generateThought();
+            stream.appendChild(thought);
+            thoughtCount++;
+            thoughtsEl.textContent = thoughtCount;
+            thoughtsEl.classList.add('updated');
+            setTimeout(() => thoughtsEl.classList.remove('updated'), 500);
+
+            const allThoughts = stream.querySelectorAll('.thought');
+            if (allThoughts.length > maxThoughts) {
+                allThoughts[0].classList.add('fading');
+                setTimeout(() => {
+                    if (allThoughts[0].parentNode) {
+                        allThoughts[0].remove();
+                    }
+                }, 1000);
+            }
+
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        function startStream() {
+            if (!isStreaming) {
+                isStreaming = true;
+                stateEl.textContent = 'FLOWING';
+                stateEl.classList.add('updated');
+                setTimeout(() => stateEl.classList.remove('updated'), 500);
+                startBtn.querySelector('.button-text').textContent = 'PAUSE STREAM';
+
+                streamInterval = setInterval(addThought, 2000);
+                addThought();
+
+                durationInterval = setInterval(() => {
+                    seconds++;
+                    durationEl.textContent = seconds + 's';
+                }, 1000);
+            }
+        }
+
+        function stopStream() {
+            if (isStreaming) {
+                isStreaming = false;
+                stateEl.textContent = 'PAUSED';
+                stateEl.classList.add('updated');
+                setTimeout(() => stateEl.classList.remove('updated'), 500);
+                startBtn.querySelector('.button-text').textContent = 'RESUME STREAM';
+
+                clearInterval(streamInterval);
+                clearInterval(durationInterval);
+            }
+        }
+
+        function resetStream() {
+            stopStream();
+            thoughtCount = 0;
+            seconds = 0;
+            isStreaming = false;
+
+            thoughtsEl.textContent = thoughtCount;
+            durationEl.textContent = seconds + 's';
+            stateEl.textContent = 'PAUSED';
+            stream.innerHTML = '<div class="instruction" id="instruction">PRESS START STREAM TO BEGIN</div>';
+            instruction.style.display = 'block';
+            startBtn.querySelector('.button-text').textContent = 'START STREAM';
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (!isStreaming) {
+                startStream();
+            } else {
+                stopStream();
+            }
+        });
+
+        stopBtn.addEventListener('click', resetStream);
+
+        createStars();
+    </script>
+
+</body>
+
+</html>
